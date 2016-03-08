@@ -1,5 +1,4 @@
-"""OOI3的前端部分，用于显示各种页面。
-包含了登录表单、登录后的跳转、不同的游戏运行模式和注销页面。
+"""OOI3 Frontend Handler - Interactive User Interface
 """
 
 import asyncio
@@ -11,7 +10,7 @@ from auth.kancolle import KancolleAuth, OOIAuthException
 
 
 class FrontEndHandler:
-    """OOI3前端请求处理类。"""
+    """This class handles browser requests"""
 
     def clear_session(self, session):
         if 'api_token' in session:
@@ -24,7 +23,7 @@ class FrontEndHandler:
     @aiohttp_jinja2.template('form.html')
     @asyncio.coroutine
     def form(self, request):
-        """展示登录表单。
+        """Display login form
 
         :param request: aiohttp.web.Request
         :return: dict
@@ -40,7 +39,7 @@ class FrontEndHandler:
 
     @asyncio.coroutine
     def login(self, request):
-        """接受登录表单提交的数据，登录后跳转或登录失败后展示错误信息。
+        """Submit the request and return responses
 
         :param request: aiohttp.web.Request
         :return: aiohttp.web.HTTPFound or aiohttp.web.Response
@@ -83,13 +82,14 @@ class FrontEndHandler:
             else:
                 raise aiohttp.web.HTTPBadRequest()
         else:
-            context = {'errmsg': '请输入完整的登录ID和密码', 'mode': mode}
+            context = {'errmsg': 'Please enter your login name and password', 'mode': mode}
             return aiohttp_jinja2.render_template('form.html', request, context)
 
     @asyncio.coroutine
     def normal(self, request):
-        """适配浏览器中进行游戏的页面，该页面会检查会话中是否有api_token、api_starttime和world_ip三个参数，缺少其中任意一个都不能进行
-        游戏，跳转回登录页面。
+        """Standard game page with a 800x480 flash embed. 
+		Auto-redirect to front page if one or more parameters are missing from: 
+		api_token、api_starttime or world_ip
 
         :param request: aiohttp.web.Request
         :return: aiohttp.web.Response or aiohttp.web.HTTPFound
@@ -110,8 +110,7 @@ class FrontEndHandler:
 
     @asyncio.coroutine
     def kcv(self, request):
-        """适配KanColleViewer或者74EO中进行游戏的页面，提供一个iframe，在iframe中载入游戏FLASH。该页面会检查会话中是否有api_token、
-        api_starttime和world_ip三个参数，缺少其中任意一个都不能进行游戏，跳转回登录页面。
+        """iFrame wrapper for viewers
 
         :param request: aiohttp.web.Request
         :return: aiohttp.web.Response or aiohttp.web.HTTPFound
@@ -128,8 +127,7 @@ class FrontEndHandler:
 
     @asyncio.coroutine
     def flash(self, request):
-        """适配KanColleViewer或者74EO中进行游戏的页面，展示，该页面会检查会话中是否有api_token、api_starttime和world_ip三个参数，
-        缺少其中任意一个都不能进行游戏，跳转回登录页面。
+        """iFrame embed for viewers
 
         :param request: aiohttp.web.Request
         :return: aiohttp.web.Response or aiohttp.web.HTTPFound
@@ -150,8 +148,7 @@ class FrontEndHandler:
 
     @asyncio.coroutine
     def poi(self, request):
-        """适配poi中进行游戏的页面，显示FLASH。该页面会检查会话中是否有api_token、api_starttime和world_ip三个参数，缺少其中任意一个
-        都不能进行游戏，跳转回登录页面。
+        """Fullscreen flash embed for poi and mobile
 
         :param request: aiohttp.web.Request
         :return: aiohttp.web.Response or aiohttp.web.HTTPFound
@@ -172,7 +169,7 @@ class FrontEndHandler:
 
     @asyncio.coroutine
     def connector(self, request):
-        """适配登录器直连模式结果页面，提供osapi.dmm.com的链接。
+        """Direct connection via osapi.dmm.com url
 
         :param request: aiohttp.web.Request
         :return: aiohttp.web.Response or aiohttp.web.HTTPFound
@@ -188,8 +185,8 @@ class FrontEndHandler:
 
     @asyncio.coroutine
     def logout(self, request):
-        """ 注销已登录的用户。
-        清除所有的session，返回首页。
+        """ Log out the current user
+        clear all session information and redirect to front page
 
         :return: aiohttp.web.HTTPFound
         """

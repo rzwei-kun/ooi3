@@ -1,5 +1,5 @@
-"""OOI3的API服务。
-只接受POST请求，包括login_id和password两个参数，返回用户的内嵌游戏网页地址或游戏FLASH地址。请求缺少参数时返回400错误。
+"""OOI3 Service Handler
+Only POST requests with valid login_id and password are accepted, returns HTTP 400 on error
 """
 
 import asyncio
@@ -12,12 +12,11 @@ from auth.kancolle import KancolleAuth
 
 
 class ServiceHandler:
-    """OOI3的API服务请求处理类。"""
+    """This class defines the login service invoked twice during auth"""
 
     @asyncio.coroutine
     def get_osapi(self, request):
-        """获取用户的内嵌游戏网页地址，返回一个JSON格式的字典。
-        结果中`status`键值为1时获取成功，`osapi_url`键值为内嵌网页地址；`status`为0时获取失败，`message`键值提供了错误信息。
+        """Fetch osapi URL and output in a JSON-format tuple
 
         :param request: aiohttp.web.Request
         :return: aiohttp.web.Response or aiohttp.web.HTTPBadRequest
@@ -41,8 +40,8 @@ class ServiceHandler:
 
     @asyncio.coroutine
     def get_flash(self, request):
-        """获取用户的游戏FLASH地址，返回一个JSON格式的字典。
-        结果中`status`键值为1时获取成功，`flash_url`键值为游戏FLASH地址；`status`为0时获取失败，`message`键值提供了错误信息。
+        """Fetch flash URL and output in a JSON-format tuple
+        Success if status == 1. error if status == 0
 
         :param request: aiohttp.web.Request
         :return: aiohttp.web.Response or aiohttp.web.HTTPBadRequest

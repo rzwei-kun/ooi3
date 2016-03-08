@@ -1,12 +1,12 @@
 import os
 
-# 代理服务器
+# Define proxy
 proxy = os.environ.get('OOI_PROXY', None)
 
-# Cookie的secret key
+# Define cookie secret key
 secret_key = os.environ.get('OOI_SECRET_KEY', 'You Must Set A Secret Key!').encode()
 
-# 项目目录
+# Define project structure
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 template_dir = os.path.join(base_dir, 'templates')
 static_dir = os.path.join(base_dir, 'static')

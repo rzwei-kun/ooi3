@@ -1,5 +1,4 @@
-"""转发客户端FLASH和游戏服务器之间的通信。
-接受客户端FLASH发送到OOI3服务器的请求，将其转发给用户所在的游戏服务器，获得响应后再返回给客户端FLASH。
+"""OOI3 API handler - asynch forward proxy for game API requests
 """
 
 import aiohttp
@@ -11,10 +10,10 @@ from base import config
 
 
 class APIHandler:
-    """ OOI3中用于转发客户端FLASH和游戏服务器间通信的类。"""
+    """ This class handles the forward proxy for API calls in game"""
 
     def __init__(self):
-        """ 构造函数，根据环境变量初始化代理服务器。
+        """ Init the proxy service
 
         :return: none
         """
@@ -23,15 +22,16 @@ class APIHandler:
         else:
             self.connector = None
 
-        # 初始化存放镇守府图片和api_start2内容的变量
+        # Re-init server banner and api_start2 cache
         self.api_start2 = None
         self.worlds = {}
 
     @asyncio.coroutine
     def world_image(self, request):
-        """ 显示正确的镇守府图片。
-        舰娘游戏中客户端FLASH请求的镇守府图片是根据FLASH本身的URL生成的，需要根据用户所在的镇守府IP为其显示正确的图片。
-
+        """ Special handling for server banner
+		URLs for server banner are generated dynamically by the flash client based on the domain hosting OOI
+		This function is necessary or the banner will not be displayed properly
+		
         :param request: aiohttp.web.Request
         :return: aiohttp.web.HTTPFound or aiohttp.web.HTTPBadRequest
         """
@@ -58,7 +58,7 @@ class APIHandler:
 
     @asyncio.coroutine
     def api(self, request):
-        """ 转发客户端和游戏服务器之间的API通信。
+        """ Forward API requests between game client and server
 
         :param request: aiohttp.web.Request
         :return: aiohttp.web.Response or aiohttp.web.HTTPBadRequest
