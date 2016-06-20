@@ -2,6 +2,7 @@
 接受客户端FLASH发送到OOI3服务器的请求，将其转发给用户所在的游戏服务器，获得响应后再返回给客户端FLASH。
 """
 
+import os
 import aiohttp
 import aiohttp.web
 import asyncio
@@ -90,6 +91,12 @@ class APIHandler:
                 body = yield from response.read()
                 if action == 'api_start2' and len(body) > 100000:
                     self.api_start2 = body
+					try:
+                        fo = open(api_start2_path, 'wb')
+                        fo.write(body)
+                        fo.close()
+                    except (IOError, PermissionError):
+                        pass
                 return aiohttp.web.Response(body=body, headers=aiohttp.MultiDict({'Content-Type': 'text/plain'}))
         else:
             return aiohttp.web.HTTPBadRequest()
